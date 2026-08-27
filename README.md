@@ -4,7 +4,9 @@ An installable iPhone web app (PWA) that **solves every formula on the FIN 740 f
 **teaches the concepts** behind each one, and **exports a populated Pro Forma** into your Excel
 workbook (`FCF, NPV and ProForma tool.xlsx`).
 
-Built for WashU Olin · Berk & DeMarzo conventions.
+Built for WashU Olin · covers both the **FIN 740** formula sheet and **Gormley's Valuation & Growth
+(FIN 7560)** formula sheet — shared formulas are merged (with both courses' notation noted in the Learn
+panels); course-specific ones (Fundamental PE, M&A synergies, balance-sheet CapEx) have their own cards.
 
 ---
 
@@ -19,7 +21,7 @@ Built for WashU Olin · Berk & DeMarzo conventions.
 | **Investing** | NPV · IRR · Profitability index · Payback & discounted payback |
 | **Free Cash Flow** | Unlevered net income & EBIT · Free cash flow · After-tax salvage · Net working capital |
 | **Cost of Capital** | CAPM (required return) · WACC |
-| **Valuation** | DCF firm/equity/share price · Terminal value · Bond valuation · Firm→equity→EV bridge · **Dividend Discount Model (finite-horizon, interactive solver)** |
+| **Valuation** | DCF firm/equity/share price · Terminal value · Bond valuation (= the YTM Solver) · Firm→equity bridge (incl. preferred equity) · Fundamental PE ratio · Comparables valuation workspace (multiples) · M&A / synergies · **Dividend Discount Model (finite-horizon, interactive solver)** |
 | **Stocks** | How to value a stock · interchangeable total-return solver (dividend yield ⇄ capital gain ⇄ total return) · returns from prices · interchangeable constant-growth (Gordon) valuation |
 | **Pro Forma** | Multi-year FCF schedule → live NPV → **Export to Excel** |
 | **Final Report** | Full forecasted model (income statement, FCF, NPV, IRR, ratios) → **Export to Excel or PDF** |

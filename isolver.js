@@ -52,7 +52,7 @@ ISOLVER_EQS.push({
   },
   derived: (v) => [['Total of all payments', eqFmt('money', v.C * v.N)], ['Total interest', eqFmt('money', v.C * v.N - v.PV)]],
   learn: {
-    whatItIs: 'The relationship between a present value and a stream of equal payments. Solve for the value, the payment (e.g., a loan payment), the rate, or the number of periods.',
+    whatItIs: 'The relationship between a present value and a stream of equal payments. Solve for the value, the payment (e.g., a loan payment), the rate, or the number of periods. Notation: Gormley’s Valuation & Growth sheet writes this as PVA₀ = CF₁/r × [1 − 1/(1+r)ⁿ] — CF₁ is the same as C, n the same as N.',
     inputs: [['Present value (PV)', 'Lump sum today (e.g., loan principal).'], ['Payment (C)', 'Equal cash flow each period.'], ['Rate (r)', 'Discount/interest rate per period.'], ['Periods (N)', 'Number of payments.']],
     how: 'Each payment is discounted and summed; the closed form replaces the sum. Solving for the payment gives a loan/mortgage payment; solving for r gives the implied interest rate.',
     meaning: 'Equates a single sum today with a level stream over time.',
@@ -80,7 +80,7 @@ ISOLVER_EQS.push({
   },
   derived: (v) => [['Final (Nth) cash flow', eqFmt('money', v.C * Math.pow(1 + v.g, v.N - 1))]],
   learn: {
-    whatItIs: 'Like an annuity, but the cash flows grow at a constant rate g each period.',
+    whatItIs: 'Like an annuity, but the cash flows grow at a constant rate g each period. Notation: Gormley’s sheet writes PVA₀ = CF₁/(r−g) × [1 − ((1+g)/(1+r))ⁿ] — identical math, CF₁ = C.',
     inputs: [['Present value (PV)', 'Value today.'], ['First cash flow (C_1)', 'Payment one period out.'], ['Rate (r)', 'Discount rate per period.'], ['Growth (g)', 'Constant growth of the payments.'], ['Periods (N)', 'Number of payments.']],
     how: 'Each term grows by (1+g) and is discounted by (1+r); the closed form sums them. When r = g, PV = C·N/(1+r).',
     meaning: 'Today’s value of a finite, steadily rising payment stream.',
@@ -108,7 +108,7 @@ ISOLVER_EQS.push({
   },
   derived: (v) => [['Implied yield (C/PV)', eqFmt('pct', v.C / v.PV)], ['Set g = 0 for a level perpetuity', '']],
   learn: {
-    whatItIs: 'A cash flow that lasts forever — level (g = 0) or growing at g. Solve for value, cash flow, rate, or growth.',
+    whatItIs: 'A cash flow that lasts forever — level (g = 0) or growing at g. Solve for value, cash flow, rate, or growth. Notation: Gormley’s sheet writes PVP₀ = CF₁/r and CF₁/(r−g) — identical math, CF₁ = C.',
     inputs: [['Present value (PV)', 'Price today.'], ['Cash flow (C)', 'Payment one period out.'], ['Rate (r)', 'Discount rate; must exceed g.'], ['Growth (g)', 'Perpetual growth; 0 = level.']],
     how: 'An infinite discounted sum collapses to C/(r−g). Rearranged, r = g + C/PV and g = r − C/PV.',
     meaning: 'The price of an endless income stream; very sensitive to r and g.',
@@ -200,7 +200,7 @@ ISOLVER_EQS.push({
   },
   derived: (v) => [['Unlevered net income', eqFmt('money', v.EBIT * (1 - v.T))]],
   learn: {
-    whatItIs: 'The actual cash a project generates for all investors in a period. Solve for FCF or back out any single driver.',
+    whatItIs: 'The actual cash a project generates for all investors in a period. Solve for FCF or back out any single driver. Gormley’s sheet calls EBIT(1−T) + depreciation the operating cash flow (OCF), so FCF = OCF − CapEx − ΔNWC — the same formula.',
     inputs: [['FCF', 'Cash freed up this period.'], ['EBIT', 'Operating profit before interest/tax.'], ['Tax rate (T)', 'Marginal rate.'], ['Depreciation', 'Added back (non-cash).'], ['CapEx', 'Cash spent on long-term assets.'], ['ΔNWC', 'Increase in net working capital.']],
     how: 'Tax EBIT, add back depreciation, subtract investment in assets and working capital.',
     meaning: 'The cash quantity you discount in a DCF.',
@@ -266,6 +266,34 @@ ISOLVER_EQS.push({
   },
 });
 
+ISOLVER_EQS.push({
+  id: 'capex', group: 'fcf', title: 'Capital Expenditures (from the Balance Sheet)',
+  formula: `CapEx = End NFA − Start NFA + Dep`,
+  expanded: `Definition #1: CapEx = End gross fixed assets − Start gross fixed assets;  Definition #2: CapEx = End NFA − Start NFA + Depreciation`,
+  vars: [
+    { key: 'CapEx', label: 'Capital expenditures', unit: 'money', def: 700 },
+    { key: 'EndNFA', label: 'Ending net fixed assets', unit: 'money', def: 2303.3 },
+    { key: 'StartNFA', label: 'Starting net fixed assets', unit: 'money', def: 1837 },
+    { key: 'Dep', label: 'Depreciation', unit: 'money', def: 233.7 },
+  ],
+  defaultSolve: 'CapEx',
+  resid: (v) => v.EndNFA - v.StartNFA + v.Dep - v.CapEx,
+  solve: {
+    CapEx: (v) => v.EndNFA - v.StartNFA + v.Dep,
+    EndNFA: (v) => v.CapEx + v.StartNFA - v.Dep,
+    StartNFA: (v) => v.EndNFA + v.Dep - v.CapEx,
+    Dep: (v) => v.CapEx - v.EndNFA + v.StartNFA,
+  },
+  derived: (v) => [['Change in net fixed assets', eqFmt('money', v.EndNFA - v.StartNFA)]],
+  learn: {
+    whatItIs: 'Backing capital spending out of the balance sheet when it isn’t reported directly (from Gormley’s formula sheet). Two equivalent definitions: the change in gross fixed assets, or the change in net fixed assets plus depreciation.',
+    inputs: [['CapEx', 'Cash spent on long-term assets in the period.'], ['Ending / starting NFA', 'Net fixed assets (gross − accumulated depreciation) at the end and start of the period.'], ['Depreciation', 'The period’s depreciation expense — added back because it reduced NFA without being spending.']],
+    how: 'Definition #1 uses gross fixed assets: CapEx = end gross − start gross (enter gross values as the NFA inputs with Dep = 0). Definition #2 uses net fixed assets: CapEx = ΔNFA + depreciation, since NFA fell by depreciation and rose by purchases.',
+    meaning: 'The investment outflow that belongs in the free-cash-flow calculation.',
+    application: 'Estimating FCF from financial statements when the cash-flow statement isn’t available — the CapEx line feeds directly into FCF = OCF − CapEx − ΔNWC.',
+  },
+});
+
 /* ---------------------------- COST OF CAPITAL ---------------------------- */
 ISOLVER_EQS.push({
   id: 'wacc', group: 'coc', title: 'Weighted Average Cost of Capital',
@@ -291,7 +319,7 @@ ISOLVER_EQS.push({
   },
   derived: (v) => [['Weight of equity', eqFmt('pct', v.E / (v.E + v.D))], ['Weight of debt', eqFmt('pct', v.D / (v.E + v.D))], ['After-tax cost of debt', eqFmt('pct', v.rd * (1 - v.T))]],
   learn: {
-    whatItIs: 'The blended cost of all financing, weighted by market values. Solve for WACC or back out any input.',
+    whatItIs: 'The blended cost of all financing, weighted by market values. Solve for WACC or back out any input. Both course formula sheets use this same formula (Gormley writes the tax rate as T_C).',
     inputs: [['WACC', 'Overall cost of capital.'], ['Equity (E)', 'Market value of equity.'], ['Debt (D)', 'Market value of debt.'], ['Cost of equity (r_E)', 'From CAPM.'], ['Cost of debt (r_D)', 'Yield on debt.'], ['Tax rate (T)', 'Interest is deductible → r_D(1−T).']],
     how: 'Weight each source by its share of capital, multiply by its cost, sum; debt uses the after-tax rate.',
     meaning: 'The minimum return new investments must earn to create value.',
@@ -358,29 +386,87 @@ ISOLVER_EQS.push({
 
 ISOLVER_EQS.push({
   id: 'equity', group: 'val', title: 'Firm → Equity → Share Price',
-  formula: `Price = ${frac('Firm value − Debt', 'Shares')}`,
-  expanded: `Equity value = Firm value − Debt;  Price = Equity value / Shares outstanding`,
+  formula: `Price = ${frac('Firm value − Debt − Preferred', 'Shares')}`,
+  expanded: `Equity value = Firm value − Debt − Preferred equity;  Price = Equity value / Shares outstanding`,
   vars: [
     { key: 'Price', label: 'Share price', unit: 'money', def: 8.75 },
     { key: 'Firm', label: 'Firm value', unit: 'money', def: 100000000 },
     { key: 'Debt', label: 'Debt', unit: 'money', def: 30000000 },
+    { key: 'Pref', label: 'Preferred equity', unit: 'money', def: 0 },
     { key: 'Shares', label: 'Shares outstanding', unit: 'num', def: 8000000 },
   ],
   defaultSolve: 'Price',
-  resid: (v) => (v.Firm - v.Debt) / v.Shares - v.Price,
+  resid: (v) => (v.Firm - v.Debt - v.Pref) / v.Shares - v.Price,
   solve: {
-    Price: (v) => (v.Firm - v.Debt) / v.Shares,
-    Firm: (v) => v.Price * v.Shares + v.Debt,
-    Debt: (v) => v.Firm - v.Price * v.Shares,
-    Shares: (v) => (v.Firm - v.Debt) / v.Price,
+    Price: (v) => (v.Firm - v.Debt - v.Pref) / v.Shares,
+    Firm: (v) => v.Price * v.Shares + v.Debt + v.Pref,
+    Debt: (v) => v.Firm - v.Pref - v.Price * v.Shares,
+    Pref: (v) => v.Firm - v.Debt - v.Price * v.Shares,
+    Shares: (v) => (v.Firm - v.Debt - v.Pref) / v.Price,
   },
-  derived: (v) => [['Equity value (Firm − Debt)', eqFmt('money', v.Firm - v.Debt)]],
+  derived: (v) => [['Equity value (Firm − Debt − Preferred)', eqFmt('money', v.Firm - v.Debt - v.Pref)]],
   learn: {
-    whatItIs: 'The bridge from a firm’s asset value to equity value and a per-share price. Solve for any of them.',
-    inputs: [['Share price', 'Equity ÷ shares.'], ['Firm value', 'Total business value (e.g., from a DCF).'], ['Debt', 'Total debt (a senior claim).'], ['Shares', 'Shares outstanding.']],
-    how: 'Equity value = firm value − debt; price = equity ÷ shares.',
-    meaning: 'Separates what the whole business is worth from what belongs to shareholders.',
-    application: 'Turning a DCF firm value into a target price.',
+    whatItIs: 'The bridge from a firm’s asset value to common-equity value and a per-share price. Solve for any of them. (FIN 740 writes Equity = Firm − Debt; Gormley’s sheet also subtracts preferred equity — leave Preferred at 0 to match the FIN 740 version.)',
+    inputs: [['Share price', 'Equity ÷ shares.'], ['Firm value', 'Total business value (e.g., from a DCF or a multiples valuation).'], ['Debt', 'Total debt (a senior claim).'], ['Preferred equity', 'Preferred stock — paid before common shareholders; 0 if none.'], ['Shares', 'Common shares outstanding.']],
+    how: 'Equity value = firm value − debt − preferred equity; price = equity ÷ shares.',
+    meaning: 'Separates what the whole business is worth from what belongs to common shareholders.',
+    application: 'Turning a DCF or multiples-based firm value into a target price — e.g., after valuing an acquisition target with comparables’ multiples, subtract its debt (and preferred) to get what its stock is worth.',
+  },
+});
+
+ISOLVER_EQS.push({
+  id: 'pe', group: 'val', title: 'Fundamental PE Ratio',
+  formula: `PE_F = ${frac('b(1+g)', 'r − g')}`,
+  expanded: `P_0 = ${frac('Div_1', 'r − g')} = ${frac('b × EPS_0 (1+g)', 'r − g')}  ⇒  ${frac('P_0', 'EPS_0')} = ${frac('b(1+g)', 'r − g')}`,
+  vars: [
+    { key: 'PE', label: 'Fundamental PE ratio (PE_F)', unit: 'num', def: 20.8 },
+    { key: 'b', label: 'Payout ratio (b)', unit: 'pct', def: 100 },
+    { key: 'g', label: 'Growth rate (g)', unit: 'pct', def: 4 },
+    { key: 'r', label: 'Discount rate (r)', unit: 'pct', def: 9 },
+  ],
+  defaultSolve: 'PE',
+  resid: (v) => v.b * (1 + v.g) / (v.r - v.g) - v.PE,
+  solve: {
+    PE: (v) => v.b * (1 + v.g) / (v.r - v.g),
+    b: (v) => v.PE * (v.r - v.g) / (1 + v.g),
+    r: (v) => v.g + v.b * (1 + v.g) / v.PE,
+    g: (v) => (v.PE * v.r - v.b) / (v.PE + v.b),
+  },
+  derived: (v) => [['Implied earnings yield (1/PE)', eqFmt('pct', v.PE ? 1 / v.PE : NaN)]],
+  learn: {
+    whatItIs: 'The price-earnings ratio a stock *should* trade at based on fundamentals (from Gormley’s formula sheet): the payout ratio, expected growth, and the discount rate. Solve for the justified PE, or invert it to find the growth or return the market is pricing in.',
+    inputs: [['Fundamental PE (PE_F)', 'Justified price per $1 of current earnings.'], ['Payout ratio (b)', 'The fraction of earnings per share paid out as dividends (100% = all earnings paid out).'], ['Growth (g)', 'Expected perpetual growth of earnings/dividends. Must be below r.'], ['Discount rate (r)', 'The stock’s cost of equity (e.g., from CAPM).']],
+    how: 'Start from the growing perpetuity P₀ = Div₁/(r−g) with Div₁ = b×EPS₀×(1+g); dividing both sides by EPS₀ gives PE = b(1+g)/(r−g). Higher growth or a lower discount rate justifies a higher PE.',
+    meaning: 'How much investors should rationally pay per dollar of current earnings. A market PE far above the fundamental PE implies the market expects more growth (or accepts a lower return) than your assumptions.',
+    application: 'Multiples valuation: value a stock as PE × EPS using comparables’ ratios, and use the fundamental PE to sanity-check whether a comp’s multiple (and its implied growth) is reasonable. High-PE firms are “growth” stocks; low-PE firms are “value” stocks.',
+  },
+});
+
+ISOLVER_EQS.push({
+  id: 'ma', group: 'val', title: 'M&A — Value of a Combined Firm',
+  formula: `PV_AB = PV_A + PV_B + Synergies`,
+  expanded: `Value of merged firm = standalone value of A + standalone value of B + PV of synergies (cost savings, revenue gains, tax benefits)`,
+  vars: [
+    { key: 'PVAB', label: 'Combined value (PV_AB)', unit: 'money', def: 115000000 },
+    { key: 'PVA', label: 'Acquirer standalone (PV_A)', unit: 'money', def: 60000000 },
+    { key: 'PVB', label: 'Target standalone (PV_B)', unit: 'money', def: 40000000 },
+    { key: 'S', label: 'Synergies', unit: 'money', def: 15000000 },
+  ],
+  defaultSolve: 'PVAB',
+  resid: (v) => v.PVA + v.PVB + v.S - v.PVAB,
+  solve: {
+    PVAB: (v) => v.PVA + v.PVB + v.S,
+    PVA: (v) => v.PVAB - v.PVB - v.S,
+    PVB: (v) => v.PVAB - v.PVA - v.S,
+    S: (v) => v.PVAB - v.PVA - v.PVB,
+  },
+  derived: (v) => [['Max sensible premium over PV_B', eqFmt('money', v.S)], ['Synergies as % of target', eqFmt('pct', v.PVB ? v.S / v.PVB : NaN)]],
+  learn: {
+    whatItIs: 'The value of two firms combined in a merger or acquisition (from Gormley’s formula sheet): each firm’s standalone value plus the present value of synergies created by combining them.',
+    inputs: [['Combined value (PV_AB)', 'What the merged firm is worth.'], ['PV_A / PV_B', 'Each firm’s standalone (pre-deal) value — from a DCF or multiples.'], ['Synergies', 'The PV of extra cash flows the combination creates: cost savings, revenue gains, tax benefits. Can be negative if the deal destroys value.']],
+    how: 'Simple value additivity plus synergies. Solve for synergies to back out what a deal price implies, or for PV_AB to value the merged entity.',
+    meaning: 'Synergies are the only economic reason a combination is worth more than the sum of its parts — and they set the ceiling on the premium worth paying.',
+    application: 'Deal analysis: if the acquirer pays a premium above PV_B larger than the synergies, the acquirer’s shareholders lose value. Back out the synergies implied by an announced price and ask whether they are believable.',
   },
 });
 

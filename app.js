@@ -535,7 +535,7 @@ CALCS.push({
   formula: `V = Cash_0 + Σ ${frac('FCF_t', '(1+r_w)^t')} + PV(Terminal)`,
   expanded: `V = Cash_0 + ${frac('FCF_1', '(1+r_w)')} + ${frac('FCF_2', '(1+r_w)^2')} + ⋯ + ${frac('FCF_N + V_N', '(1+r_w)^N')};  Equity = V − Debt;  Price = Equity / Shares`,
   learn: {
-    whatItIs: 'A full discounted-cash-flow valuation: discount the forecast free cash flows plus a terminal value at the WACC, then bridge from firm value to equity value and a per-share price.',
+    whatItIs: 'A full discounted-cash-flow valuation: discount the forecast free cash flows plus a terminal value at the WACC, then bridge from firm value to equity value and a per-share price. Notation: Gormley’s sheet writes the same formula as Firm value = cash₀ + Σ FCF_t/(1+WACC)^t + TV_N/(1+WACC)^N.',
     inputs: [
       ['WACC (r_w)', 'The discount rate for free cash flows.'],
       ['Forecast FCFs', 'Free cash flow for each forecast year (FCF₁, FCF₂, …), comma/space separated.'],
@@ -769,6 +769,7 @@ function renderGroup() {
   html += eqs.map(eqCardHTML).join('');
   html += list.map(calcCardHTML).join('');
   if (g === 'val' && typeof ddmCardHTML === 'function') html += ddmCardHTML();
+  if (g === 'val' && typeof compsCardHTML === 'function') html += compsCardHTML();
   main.innerHTML = html;
   list.forEach(runCalc);
   main.querySelectorAll('input,textarea').forEach(el => {
@@ -779,6 +780,7 @@ function renderGroup() {
   });
   eqs.forEach(eqInit);
   if (g === 'val' && typeof wireDDM === 'function') wireDDM();
+  if (g === 'val' && typeof wireComps === 'function') wireComps();
   if (g === 'coc' && typeof wireCapm === 'function') wireCapm();
   main.scrollTop = 0;
 }

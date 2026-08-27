@@ -23,7 +23,8 @@ function capmCardHTML() {
     <details class="learn"><summary>📘 Learn — inputs, method, meaning &amp; application</summary>
       <div class="learnbody">
         <p><b>What it is.</b> The Capital Asset Pricing Model: the return investors require for bearing a stock's
-        market (systematic) risk — i.e., its cost of equity.</p>
+        market (systematic) risk — i.e., its cost of equity. Both course formula sheets use this same equation
+        (Gormley writes it r_i = r_f + β_i(r_m − r_f)).</p>
         <p><b>Inputs.</b></p>
         <ul>
           <li><b>Risk-free rate (r_f)</b> — return on a safe asset, e.g., a Treasury yield.</li>

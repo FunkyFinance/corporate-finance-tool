@@ -65,6 +65,9 @@ sup{ font-size:.72em; }
 .sh-top b{ font-size:15px; }
 .sh-tag{ flex:0 0 auto; font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:3px 8px; border-radius:999px; }
 .sh-formula{ display:block; margin:0; font-size:13px; overflow-x:auto; }
+.comps-del{ border:none; background:transparent; color:var(--bad); font-size:14px; font-weight:700; cursor:pointer; padding:4px 6px; }
+#comps-table td input{ width:100px; }
+#comps-table td:first-child input{ width:110px; text-align:left; }
 .flash{ animation:flash 1.5s ease; }
 @keyframes flash{ 0%,100%{ box-shadow:0 1px 3px rgba(16,30,54,.06); } 25%{ box-shadow:0 0 0 3px var(--accent2); } }
 
@@ -140,3 +143,4 @@ textarea{ resize:vertical; }
   padding:16px 18px calc(env(safe-area-inset-bottom) + 22px); margin-top:10px; }
 
 @media (max-width:380px){ .fields{ grid-template-columns:1fr; } }
+.appver{ display:block; margin-top:6px; font-size:10.5px; font-weight:600; opacity:.65; letter-spacing:.4px; }

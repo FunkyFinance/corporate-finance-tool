@@ -16,7 +16,7 @@ function buildSearchIndex() {
   // interactive equations
   (typeof ISOLVER_EQS !== 'undefined' ? ISOLVER_EQS : []).forEach(eq => idx.push({
     title: eq.title, group: eq.group, anchor: 'eq__' + eq.id, formula: eq.formula,
-    terms: [eq.title, stripTags(eq.formula), eq.vars.map(v => v.label).join(' '), eq.learn && eq.learn.whatItIs].join(' '),
+    terms: [eq.title, stripTags(eq.formula), eq.vars.map(v => v.label).join(' '), eq.learn && eq.learn.whatItIs, eq.learn && eq.learn.application].join(' '),
   }));
 
   // stream calculators that stay multi-input
@@ -29,6 +29,7 @@ function buildSearchIndex() {
   const custom = [
     { title: 'CAPM — Cost of Equity', group: 'coc', anchor: 'capm-card', formula: 'r_E = r_f + β × (E(r_m) − r_f)', kw: 'capm beta risk free market risk premium cost of equity required return' },
     { title: 'Dividend Discount Model — Finite Horizon', group: 'val', anchor: 'ddm-card', formula: 'P_0 = Σ Div_t/(1+r)^t + P_N/(1+r)^N', kw: 'dividend discount ddm finite horizon stock value sale price' },
+    { title: 'Comparables Valuation Workspace', group: 'val', anchor: 'comps-card', formula: 'Target value = Avg multiple × Target metric', kw: 'comparables comps multiples valuation ev sales ebitda pe ratio peer equal weighted value weighted delta relative valuation' },
     { title: 'How to value a stock', group: 'stk', anchor: 'stk-overview', formula: 'r_E = Div_1/P_0 + (P_1 − P_0)/P_0', kw: 'stock valuation dividend yield capital gain total return overview' },
     { title: 'Total Return Solver', group: 'stk', anchor: 'stk-return', formula: 'Total return = Dividend yield + Capital gain rate', kw: 'dividend yield capital gain total return solve' },
     { title: 'Returns from Prices', group: 'stk', anchor: 'stk-prices', formula: 'Dividend yield = Div_1/P_0 ; Capital gain = (P_1 − P_0)/P_0', kw: 'price dividend yield capital gain holding period return' },
