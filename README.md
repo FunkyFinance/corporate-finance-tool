@@ -25,6 +25,7 @@ panels); course-specific ones (Fundamental PE, M&A synergies, balance-sheet CapE
 | **Stocks** | How to value a stock · interchangeable total-return solver (dividend yield ⇄ capital gain ⇄ total return) · returns from prices · interchangeable constant-growth (Gordon) valuation |
 | **Pro Forma** | Multi-year FCF schedule → live NPV → **Export to Excel** |
 | **Final Report** | Full forecasted model (income statement, FCF, NPV, IRR, ratios) → **Export to Excel or PDF** |
+| **📷 Import** | Snap/upload a photo of a 10-K, P&L, balance sheet, cash-flow statement, or pro forma — on-device OCR detects the line items, you review/edit, then one tap applies them to the calculators |
 | **🔎 Search** | Find any term, formula, or calculator across the app and jump straight to it |
 
 **Interactive equations.** Calculators in Time Value, Free Cash Flow, Cost of Capital, Valuation and Stocks
@@ -74,6 +75,7 @@ standalone app window. Then Safari → **Add to Home Screen**.
 - `proforma.js` — Pro Forma builder + Excel populate/export (mirrors the template's formulas)
 - `finalreport.js` — Final Report model + Excel populate and PDF generation
 - `template.xlsx` · `finalreport_template.xlsx` — your workbooks, embedded for export
+- `import.js` · `vendor/tesseract/` — photo import (on-device OCR; ~6 MB engine, cached after first use)
 - `vendor/jszip.min.js` — reads/writes the .xlsx (works offline)
 - `vendor/jspdf.umd.min.js` · `vendor/jspdf.plugin.autotable.min.js` — PDF generation (works offline)
 - `manifest.webmanifest` · `sw.js` · `icons/` — PWA install + offline support

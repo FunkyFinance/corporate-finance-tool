@@ -144,3 +144,10 @@ textarea{ resize:vertical; }
 
 @media (max-width:380px){ .fields{ grid-template-columns:1fr; } }
 .appver{ display:block; margin-top:6px; font-size:10.5px; font-weight:600; opacity:.65; letter-spacing:.4px; }
+
+.imp-btn{ text-align:center; }
+.imp-progress{ height:6px; background:var(--bg); border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-top:12px; }
+#imp-bar{ height:100%; width:0; background:linear-gradient(90deg,var(--accent2),var(--accent)); transition:width .25s; }
+.imp-thumb{ max-width:100%; border:1px solid var(--line); border-radius:10px; margin-top:10px; }
+.imp-apply{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.imp-apply .export{ margin-top:0; font-size:13.5px; padding:12px 8px; }

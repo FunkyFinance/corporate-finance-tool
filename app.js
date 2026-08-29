@@ -155,6 +155,7 @@ const GROUPS = [
   { id: 'stk',   label: 'Stocks' },
   { id: 'pf',    label: 'Pro Forma' },
   { id: 'fr',    label: 'Final Report' },
+  { id: 'imp',   label: '📷 Import' },
   { id: 'search',label: '🔎 Search' },
 ];
 
@@ -761,6 +762,7 @@ function renderGroup() {
   if (state.group === 'fr') { renderFinalReport(); return; }
   if (state.group === 'stk') { renderStocks(); return; }
   if (state.group === 'search') { renderSearch(); return; }
+  if (state.group === 'imp') { renderImport(); return; }
   const g = state.group;
   const list = CALCS.filter(c => c.group === g);
   const eqs = (typeof ISOLVER_EQS !== 'undefined') ? ISOLVER_EQS.filter(e => e.group === g) : [];

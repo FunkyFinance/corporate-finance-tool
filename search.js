@@ -34,6 +34,7 @@ function buildSearchIndex() {
     { title: 'Total Return Solver', group: 'stk', anchor: 'stk-return', formula: 'Total return = Dividend yield + Capital gain rate', kw: 'dividend yield capital gain total return solve' },
     { title: 'Returns from Prices', group: 'stk', anchor: 'stk-prices', formula: 'Dividend yield = Div_1/P_0 ; Capital gain = (P_1 − P_0)/P_0', kw: 'price dividend yield capital gain holding period return' },
     { title: 'Constant-Growth (Gordon) Valuation', group: 'stk', anchor: 'stk-gordon', formula: 'P_0 = Div_1/(r_E − g)', kw: 'gordon constant growth dividend valuation required return' },
+    { title: 'Import a Financial Report', group: 'imp', anchor: 'imp-card', formula: 'photo → OCR → review → apply to calculators', kw: 'import photo camera scan upload ocr 10-k 10k income statement balance sheet cash flow p&l profit loss pro forma read document' },
     { title: 'Pro Forma — FCF & NPV', group: 'pf', anchor: 'pf-card', formula: 'NPV = Σ FCF_t/(1+r)^t', kw: 'pro forma proforma npv free cash flow capital budgeting export excel' },
     { title: 'Final Report — Forecasted Model', group: 'fr', anchor: 'fr-card', formula: 'IS · FCF · NPV · IRR · ratios', kw: 'final report financial statements income statement npv irr ratios export pdf excel' },
   ];
